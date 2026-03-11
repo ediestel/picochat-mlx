@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Showing an example run for exercising some of the code paths on the CPU (or MPS on Macbooks)
-# This script was last updated/tuned on Jan 17, 2026.
+# This script was last updated/tuned on Mar 11, 2026.
 
 # Run as:
 # bash runs/runcpu.sh
@@ -14,19 +14,32 @@
 export NANOCHAT_BASE_DIR="$HOME/.cache/nanochat"
 mkdir -p $NANOCHAT_BASE_DIR
 command -v uv &> /dev/null || curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# rustbpe is a local Rust extension — cargo (the Rust build tool) must be in PATH.
+# Install the Rust toolchain once with: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+# Then open a new terminal (or run: source ~/.cargo/env) so that cargo is on your PATH.
+if ! command -v cargo &> /dev/null; then
+    echo "ERROR: cargo (Rust toolchain) not found. Install Rust first:"
+    echo "  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
+    echo "Then open a new terminal and re-run this script."
+    exit 1
+fi
+
 [ -d ".venv" ] || uv venv
+# NOTE: first run compiles the rustbpe Rust extension (~20-25s); subsequent runs use the cache.
 uv sync --extra cpu
 source .venv/bin/activate
 if [ -z "$WANDB_RUN" ]; then
     WANDB_RUN=dummy
 fi
 
-# train tokenizer on ~2B characters (~34 seconds on my MacBook Pro M3 Max)
+# train tokenizer on ~2B characters using the local rustbpe Rust BPE implementation.
+# rustbpe uses all CPU cores via Rayon. Expect ~25-35 seconds on an M-series Mac.
 python -m nanochat.dataset -n 8
 python -m scripts.tok_train --max-chars=2000000000
 python -m scripts.tok_eval
 
-# train a small 4 layer model
+# train a small model
 # I tuned this run to complete in about 30 minutes on my MacBook Pro M3 Max.
 # To get better results, try increasing num_iterations, or get other ideas from your favorite LLM.
 python -m scripts.base_train \
