@@ -9,21 +9,14 @@
   - rustbpe/pyproject.toml — maturin build backend with extension-module feature                                                                
   - rustbpe/src/lib.rs — 578 lines with all 6 fixes applied:                                                                                    
 
-  ┌───────────────────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────┐       
-  │          Fix          │                                                   Change                                                    │       
-  ├───────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  Fixed:
+  
   │ A — count type        │ pair_counts: AHashMap<Pair, i64>, widened delta as i64 * i64, .max(0) guard before as u64 cast              │
-  ├───────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
   │ B — determinism       │ Heap init sorts init_pairs by pair before pushing; count_pairs_parallel returns Vec<usize> with sort+dedup  │
-  ├───────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
   │ C — lean heap nodes   │ MergeJob { pair, count } only; pair_positions: AHashMap<Pair, Vec<usize>> side map                          │
-  ├───────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
   │ D — stale scan guard  │ windows(2).any(...) pre-check before calling merge_pair                                                     │
-  ├───────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
   │ E — O(n log n) encode │ BinaryHeap<Reverse<(u32, usize)>> min-heap + prev/next linked arrays; u32::MAX sentinel marks deleted slots │
-  ├───────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
   │ F — comment           │ Clarified tie-break comment in Ord impl                                                                     │
-  └───────────────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 
   Modified:
   - pyproject.toml — added rustbpe = { path = "rustbpe/" } under [tool.uv.sources]
