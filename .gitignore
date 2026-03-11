@@ -1,0 +1,56 @@
+# ── Python ───────────────────────────────────────────────────────────────────
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+dist/
+build/
+*.whl
+.eggs/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ── Rust (rustbpe) ───────────────────────────────────────────────────────────
+# rustbpe/target/ is covered by rustbpe/.gitignore
+# Cargo.lock is intentionally committed for reproducible builds
+
+# ── macOS ────────────────────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ── Environment & secrets ────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── ML training artefacts ────────────────────────────────────────────────────
+wandb/
+runs/**/*.pt
+runs/**/*.bin
+runs/**/*.safetensors
+runs/**/*.ckpt
+# keep shell scripts and logs in runs/ but not large model files
+!runs/*.sh
+!runs/*.md
+
+# ── Claude Code local context ────────────────────────────────────────────────
+.claude/
+
+# ── IDE ──────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ── Misc project-specific ────────────────────────────────────────────────────
+dev-ignore/
+report.md
+eval_bundle/
+CLAUDE.md
